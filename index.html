@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWEIF Operations - Registro USDT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/tabler-icons@latest/tabler-icons.css" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0; 
+            padding: 0; 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f8f9fa;
+        }
+        
+        :root {
+            --color-primary: #185fa5;
+            --color-primary-light: #e6f1fb;
+            --color-text-primary: #1a1a1a;
+            --color-text-secondary: #666666;
+            --color-text-tertiary: #999999;
+            --color-border-light: #e0e0e0;
+            --color-bg-white: #ffffff;
+            --color-danger: #e24b4a;
+            --color-success: #639922;
+            --color-info: #185fa5;
+        }
+
+        .login-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--color-primary-light) 0%, rgba(24, 95, 165, 0.05) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        
+        .login-card {
+            background: var(--color-bg-white);
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            padding: 2rem;
+            max-width: 380px;
+            width: 100%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .login-icon {
+            font-size: 48px;
+            margin-bottom: 1rem;
+            color: var(--color-primary);
+        }
+        
+        .login-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0 0 0.5rem;
+            color: var(--color-text-primary);
+        }
+        
+        .login-subtitle {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            margin: 0;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            margin-bottom: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        input[type="email"],
+        input[type="password"],
+        input[type="number"],
+        input[type="text"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--color-border-light);
+            border-radius: 6px;
+            font-size: 14px;
+            background: var(--color-bg-white);
+            color: var(--color-text-primary);
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 2px rgba(24, 95, 165, 0.1);
+        }
+        
+        .btn-login, .btn-register, .btn-action {
+            padding: 12px;
+            background: var(--color-primary);
+            color: white;
+            border: 1px solid var(--color-primary);
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            margin-top: 1rem;
+        }
+        
+        .btn-login:hover, .btn-register:hover, .btn-action:hover {
+            background: #134380;
+            border-color: #134380;
+        }
+        
+        .error-message {
+            color: var(--color-danger);
+            font-size: 12px;
+            margin-top: 6px;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        .app-container {
+            display: none;
+        }
+        
+        .app-container.active {
+            display: block;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--color-primary-light) 0%, rgba(24, 95, 165, 0.05) 100%);
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--color-border-light);
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-left h1 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+        
+        .header-left p {
+            margin: 0.25rem 0 0;
+            font-size: 13px;
+            color: var(--color-text-secondary);
+        }
+        
+        .header-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
+        
+        .user-badge {
+            background: #f0f0f0;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 12px;
+            color: var(--color-text-secondary);
+        }
+        
+        .btn-logout {
+            padding: 8px 12px;
+            background: var(--color-bg-white);
+            border: 1px solid var(--color-border-light);
+            border-radius: 6px;
+            color: var(--color-text-primary);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .btn-logout:hover {
+            border-color: var(--color-danger);
+            color: var(--color-danger);
+        }
+        
+        .form-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 0 1rem 1.5rem;
+            border: 1px solid var(--color-border-light);
+        }
+        
+        .form-section h2 {
+            margin: 0 0 1rem;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+        
+        .riels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 8px;
+        }
+        
+        .riel-toggle {
+            padding: 10px;
+            border: 1px solid var(--color-border-light);
+            border-radius: 6px;
+            background: var(--color-bg-white);
+            color: var(--color-text-primary);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .riel-toggle:hover {
+            border-color: var(--color-border-light);
+            background: #f0f0f0;
+        }
+        
+        .riel-toggle.active {
+            background: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+        
+        .riel-select {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .riel-option {
+            padding: 10px;
+            border: 1px solid var(--color-border-light);
+            border-radius: 6px;
+            background: var(--color-bg-white);
+            color: var(--color-text-primary);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-align: center;
+            display: none;
+        }
+        
+        .riel-option.visible {
+            display: block;
+        }
+        
+        .riel-option.selected {
+            background: var(--color-success);
+            color: white;
+            border-color: var(--color-success);
+        }
+        
+        .image-upload-area {
+            border: 2px dashed var(--color-border-light);
+            border-radius: 6px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--color-bg-white);
+            margin-top: 8px;
+        }
+        
+        .image-upload-area:hover {
+            border-color: var(--color-primary);
+            background: var(--color-primary-light);
+        }
+        
+        .image-preview {
+            margin-top: 10px;
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            max-height: 150px;
+        }
+        
+        .image-name {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            margin-top: 8px;
+        }
+        
+        .operation-card {
+            background: var(--color-bg-white);
+            border: 1px solid var(--color-border-light);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 10px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+            align-items: start;
+        }
+        
+        .op-amount {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+        
+        .op-meta {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 6px;
+        }
+        
+        .op-badge {
+            display: inline-block;
+            background: var(--color-primary-light);
+            color: var(--color-primary);
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .op-hash {
+            font-size: 11px;
+            color: var(--color-text-tertiary);
+            font-family: monospace;
+            word-break: break-all;
+            margin-top: 6px;
+        }
+        
+        .btn-small {
+            padding: 6px 8px;
+            background: transparent;
+            border: 1px solid var(--color-border-light);
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--color-text-primary);
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        
+        .btn-small:hover {
+            border-color: var(--color-danger);
+            color: var(--color-danger);
+        }
+        
+        .operations-container {
+            margin: 0 1rem 1.5rem;
+        }
+        
+        .summary-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 0 1rem 1.5rem;
+            border: 1px solid var(--color-border-light);
+        }
+        
+        .summary-text {
+            background: var(--color-bg-white);
+            border: 1px solid var(--color-border-light);
+            border-radius: 6px;
+            padding: 1rem;
+            font-family: monospace;
+            font-size: 12px;
+            color: var(--color-text-primary);
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin-bottom: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: var(--color-text-secondary);
+        }
+        
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--color-bg-white);
+            border-radius: 12px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow: auto;
+            position: relative;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--color-text-secondary);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="login-screen">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <div class="login-icon">🔐</div>
+                    <h1 class="login-title">SWEIF Operations</h1>
+                    <p class="login-subtitle">Registro seguro de operaciones USDT</p>
+                </div>
+
+                <form onsubmit="handleLogin(event)" style="margin: 0;">
+                    <div class="form-group">
+                        <label>Correo electrónico</label>
+                        <input type="email" id="login-email" placeholder="tu@email.com" required autofocus />
+                        <div class="error-message" id="error-email"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Contraseña</label>
+                        <input type="password" id="login-password" placeholder="••••••••" required />
+                        <div class="error-message" id="error-password"></div>
+                    </div>
+
+                    <button type="submit" class="btn-login">
+                        🔓 Ingresar
+                    </button>
+
+                    <div class="error-message" id="error-general" style="text-align: center;"></div>
+                </form>
+
+                <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--color-border-light); text-align: center;">
+                    <p style="font-size: 12px; color: var(--color-text-secondary); margin: 0;">
+                        <strong>Demo:</strong><br>
+                        admin@sweif.com / admin123<br>
+                        user@sweif.com / user123
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="app-screen" class="app-container">
+        <div class="header">
+            <div class="header-left">
+                <h1>📊 SWEIF Operaciones USDT</h1>
+                <p>Registro y seguimiento de cierres</p>
+            </div>
+            <div class="header-right">
+                <div class="user-badge">
+                    👤 <span id="current-user"></span>
+                </div>
+                <button class="btn-logout" onclick="logout()">
+                    🚪 Cerrar sesión
+                </button>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2>Nueva operación</h2>
+            
+            <div class="form-group">
+                <label>Monto en USDT (con centavos)</label>
+                <input type="number" id="usdt-amount" placeholder="ej: 5000.50" step="0.01" min="0" />
+            </div>
+
+            <div class="form-group">
+                <label>Activar/desactivar rieles</label>
+                <div class="riels-grid">
+                    <button type="button" class="riel-toggle" onclick="toggleRiel(1)">Riel 1</button>
+                    <button type="button" class="riel-toggle" onclick="toggleRiel(2)">Riel 2</button>
+                    <button type="button" class="riel-toggle" onclick="toggleRiel(3)">Riel 3</button>
+                    <button type="button" class="riel-toggle" onclick="toggleRiel(4)">Riel 4</button>
+                    <button type="button" class="riel-toggle" onclick="toggleRiel(5)">Riel 5</button>
+                    <button type="button" class="riel-toggle" onclick="toggleRiel(6)">Riel 6</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Seleccionar riel para esta operación</label>
+                <div class="riel-select" id="riel-select-container">
+                    <div class="riel-option" data-riel="1" onclick="selectRiel(1)">Riel 1</div>
+                    <div class="riel-option" data-riel="2" onclick="selectRiel(2)">Riel 2</div>
+                    <div class="riel-option" data-riel="3" onclick="selectRiel(3)">Riel 3</div>
+                    <div class="riel-option" data-riel="4" onclick="selectRiel(4)">Riel 4</div>
+                    <div class="riel-option" data-riel="5" onclick="selectRiel(5)">Riel 5</div>
+                    <div class="riel-option" data-riel="6" onclick="selectRiel(6)">Riel 6</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>HASH de la operación</label>
+                <input type="text" id="operation-hash" placeholder="ej: 0x7f3a2b8c9d1e4f5a..." />
+            </div>
+
+            <div class="form-group">
+                <label>Comprobante de envío USDT (imagen)</label>
+                <div class="image-upload-area" onclick="document.getElementById('image-input').click()">
+                    📸 Haz clic para subir imagen
+                    <div class="image-name" id="image-name"></div>
+                </div>
+                <input type="file" id="image-input" accept="image/*" style="display: none;" onchange="handleImageSelect()" />
+                <img id="image-preview" class="image-preview" style="display: none;" />
+            </div>
+
+            <button class="btn-register" onclick="registerOperation()">
+                ➕ Registrar operación
+            </button>
+        </div>
+
+        <div id="operations-section" style="display: none;">
+            <div style="margin: 0 1rem 1rem; font-size: 14px; color: var(--color-text-secondary);">
+                📋 <span id="op-count">0</span> operaciones registradas
+            </div>
+
+            <div class="operations-container" id="ops-container"></div>
+
+            <div class="summary-section">
+                <h2>Resumen para custodio</h2>
+                <div class="summary-text" id="summary-text"></div>
+                <div class="action-buttons">
+                    <button class="btn-action" onclick="copySummary()">
+                        📋 Copiar resumen
+                    </button>
+                    <button class="btn-action" onclick="downloadCSV()">
+                        ⬇️ Descargar CSV
+                    </button>
+                    <button class="btn-action" style="color: var(--color-danger); border-color: var(--color-danger);" onclick="clearAll()">
+                        🗑️ Limpiar registro
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="empty-state" class="empty-state">
+            📭 No hay operaciones registradas aún
+        </div>
+    </div>
+
+    <div id="modal-overlay" class="modal-overlay" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal()">✕</button>
+            <img id="modal-image" style="width: 100%; height: auto; display: block;" />
+        </div>
+    </div>
+
+    <input type="hidden" id="selected-riel" />
+    <input type="hidden" id="image-data" />
+
+    <script>
+        let currentUser = null;
+        let operations = [];
+        let enabledRiels = [1, 2, 3, 4, 5, 6];
+
+        const users = {
+            'admin@sweif.com': { password: 'admin123', role: 'admin' },
+            'user@sweif.com': { password: 'user123', role: 'user' }
+        };
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            clearErrors();
+
+            if (!email || !password) {
+                showError('error-general', 'Por favor completa todos los campos');
+                return;
+            }
+
+            if (!users[email]) {
+                showError('error-email', 'Correo no registrado');
+                return;
+            }
+
+            if (users[email].password !== password) {
+                showError('error-password', 'Contraseña incorrecta');
+                return;
+            }
+
+            currentUser = { email, role: users[email].role };
+            localStorage.setItem('sweifUser', JSON.stringify(currentUser));
+            loadOperations();
+            showAppScreen();
+        }
+
+        function showError(elementId, message) {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.classList.add('show');
+        }
+
+        function clearErrors() {
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.classList.remove('show');
+                el.textContent = '';
+            });
+        }
+
+        function showAppScreen() {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app-screen').classList.add('active');
+            document.getElementById('current-user').textContent = currentUser.email;
+            initRiels();
+            renderOperations();
+        }
+
+        function logout() {
+            if (confirm('¿Cerrar sesión?')) {
+                currentUser = null;
+                localStorage.removeItem('sweifUser');
+                document.getElementById('login-screen').style.display = 'block';
+                document.getElementById('app-screen').classList.remove('active');
+                document.getElementById('login-email').value = '';
+                document.getElementById('login-password').value = '';
+                clearErrors();
+            }
+        }
+
+        function saveOperations() {
+            localStorage.setItem(`sweifOps_${currentUser.email}`, JSON.stringify(operations));
+        }
+
+        function loadOperations() {
+            operations = JSON.parse(localStorage.getItem(`sweifOps_${currentUser.email}`)) || [];
+        }
+
+        function initRiels() {
+            enabledRiels = JSON.parse(localStorage.getItem(`sweifRiels_${currentUser.email}`)) || [1, 2, 3, 4, 5, 6];
+            updateRielUI();
+            updateAvailableRiels();
+        }
+
+        function toggleRiel(rielNum) {
+            const idx = enabledRiels.indexOf(rielNum);
+            if (idx > -1) {
+                enabledRiels.splice(idx, 1);
+            } else {
+                enabledRiels.push(rielNum);
+                enabledRiels.sort((a, b) => a - b);
+            }
+            localStorage.setItem(`sweifRiels_${currentUser.email}`, JSON.stringify(enabledRiels));
+            updateRielUI();
+            updateAvailableRiels();
+        }
+
+        function updateRielUI() {
+            document.querySelectorAll('.riel-toggle').forEach((btn, idx) => {
+                const rielNum = idx + 1;
+                if (enabledRiels.includes(rielNum)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        function updateAvailableRiels() {
+            document.querySelectorAll('.riel-option').forEach(opt => {
+                const rielNum = parseInt(opt.dataset.riel);
+                if (enabledRiels.includes(rielNum)) {
+                    opt.classList.add('visible');
+                } else {
+                    opt.classList.remove('visible');
+                    opt.classList.remove('selected');
+                }
+            });
+        }
+
+        function selectRiel(rielNum) {
+            if (!enabledRiels.includes(rielNum)) return;
+            document.querySelectorAll('.riel-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            document.querySelector(`[data-riel="${rielNum}"]`).classList.add('selected');
+            document.getElementById('selected-riel').value = rielNum;
+        }
+
+        function handleImageSelect() {
+            const file = document.getElementById('image-input').files[0];
+            if (!file) return;
+
+            document.getElementById('image-name').textContent = `✓ ${file.name}`;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('image-data').value = e.target.result;
+                const preview = document.getElementById('image-preview');
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function openImageModal(src) {
+            document.getElementById('modal-image').src = src;
+            document.getElementById('modal-overlay').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+
+        function formatDate(date) {
+            return new Date(date).toLocaleString('es-CO', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+        }
+
+        function registerOperation() {
+            const usdt = document.getElementById('usdt-amount').value;
+            const riel = document.getElementById('selected-riel').value;
+            const hash = document.getElementById('operation-hash').value;
+            const image = document.getElementById('image-data').value;
+
+            if (!usdt || !riel) {
+                alert('Por favor completa: monto, selecciona un riel');
+                return;
+            }
+
+            if (!hash) {
+                alert('Por favor ingresa el HASH de la operación');
+                return;
+            }
+
+            operations.push({
+                usdt: parseFloat(usdt).toFixed(2),
+                riel: `Riel ${riel}`,
+                hash: hash,
+                image: image,
+                timestamp: new Date().toISOString(),
+                user: currentUser.email
+            });
+
+            saveOperations();
+
+            document.getElementById('usdt-amount').value = '';
+            document.getElementById('operation-hash').value = '';
+            document.getElementById('image-data').value = '';
+            document.getElementById('image-preview').style.display = 'none';
+            document.getElementById('image-name').textContent = '';
+            document.getElementById('image-input').value = '';
+            document.querySelectorAll('.riel-option').forEach(opt => opt.classList.remove('selected'));
+            document.getElementById('selected-riel').value = '';
+
+            renderOperations();
+        }
+
+        function renderOperations() {
+            const container = document.getElementById('ops-container');
+            const empty = document.getElementById('empty-state');
+            const section = document.getElementById('operations-section');
+
+            if (operations.length === 0) {
+                empty.style.display = 'block';
+                section.style.display = 'none';
+                return;
+            }
+
+            empty.style.display = 'none';
+            section.style.display = 'block';
+            document.getElementById('op-count').textContent = operations.length;
+
+            container.innerHTML = operations.map((op, idx) => `
+                <div class="operation-card">
+                    <div>
+                        <div class="op-amount">${op.usdt} USDT</div>
+                        <div class="op-meta">
+                            <span class="op-badge">${op.riel}</span>
+                            <span>${formatDate(op.timestamp)}</span>
+                        </div>
+                        <div class="op-hash">Hash: ${op.hash}</div>
+                    </div>
+                    <div style="display: flex; gap: 6px;">
+                        ${op.image ? `<img src="${op.image}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; cursor: pointer;" onclick="openImageModal('${op.image.replace(/'/g, "\\'")}')" title="Ver comprobante" />` : ''}
+                        <button class="btn-small" onclick="deleteOperation(${idx})" title="Eliminar">
+                            🗑️
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            updateSummary();
+        }
+
+        function deleteOperation(idx) {
+            if (confirm('¿Eliminar esta operación?')) {
+                operations.splice(idx, 1);
+                saveOperations();
+                renderOperations();
+            }
+        }
+
+        function updateSummary() {
+            const grouped = {};
+            operations.forEach(op => {
+                if (!grouped[op.riel]) grouped[op.riel] = 0;
+                grouped[op.riel] += parseFloat(op.usdt);
+            });
+
+            let summary = '═══════════════════════════════════════════\n';
+            summary += 'REPORTE DE CIERRES USDT - SWEIF\n';
+            summary += '═══════════════════════════════════════════\n\n';
+            summary += `Fecha: ${new Date().toLocaleDateString('es-CO')}\n`;
+            summary += `Hora: ${new Date().toLocaleTimeString('es-CO')}\n`;
+            summary += `Usuario: ${currentUser.email}\n\n`;
+            summary += '───────────────────────────────────────────\n';
+            summary += 'DETALLE POR RIEL:\n';
+            summary += '───────────────────────────────────────────\n\n';
+
+            Object.entries(grouped).forEach(([riel, total]) => {
+                summary += `${riel}\n`;
+                summary += `└─ Total USDT: ${total.toFixed(2)}\n`;
+                summary += `└─ Operaciones: ${operations.filter(op => op.riel === riel).length}\n\n`;
+            });
+
+            const totalUsdt = operations.reduce((sum, op) => sum + parseFloat(op.usdt), 0);
+            summary += '───────────────────────────────────────────\n';
+            summary += `TOTAL PROCESADO: ${totalUsdt.toFixed(2)} USDT\n`;
+            summary += '───────────────────────────────────────────\n\n';
+            summary += `Total operaciones: ${operations.length}\n`;
+            summary += '═══════════════════════════════════════════';
+
+            document.getElementById('summary-text').textContent = summary;
+        }
+
+        function copySummary() {
+            const text = document.getElementById('summary-text').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✓ Resumen copiado al portapapeles');
+            }).catch(() => {
+                alert('Error al copiar');
+            });
+        }
+
+        function downloadCSV() {
+            if (operations.length === 0) {
+                alert('No hay operaciones para descargar');
+                return;
+            }
+
+            let csv = 'Monto USDT,Riel,HASH,Usuario,Fecha,Hora\n';
+            operations.forEach(op => {
+                const date = new Date(op.timestamp);
+                const dateStr = date.toLocaleDateString('es-CO');
+                const timeStr = date.toLocaleTimeString('es-CO', { hour12: false });
+                csv += `"${op.usdt}","${op.riel}","${op.hash}","${op.user}","${dateStr}","${timeStr}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.setAttribute('href', URL.createObjectURL(blob));
+            link.setAttribute('download', `sweif-operaciones-${new Date().toISOString().split('T')[0]}.csv`);
+            link.click();
+        }
+
+        function clearAll() {
+            if (confirm('¿Eliminar todas las operaciones? Esta acción no se puede deshacer.')) {
+                operations = [];
+                saveOperations();
+                renderOperations();
+            }
+        }
+
+        const savedUser = localStorage.getItem('sweifUser');
+        if (savedUser) {
+            currentUser = JSON.parse(savedUser);
+            loadOperations();
+            showAppScreen();
+        }
+    </script>
+</body>
+</html>
